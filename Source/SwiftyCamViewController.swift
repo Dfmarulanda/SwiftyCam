@@ -168,6 +168,10 @@ open class SwiftyCamViewController: UIViewController {
     /// Sets whether or not app should display prompt to app settings if audio/video permission is denied
     /// If set to false, delegate function will be called to handle exception
     public var shouldPrompToAppSettings       = true
+  
+  /// Sets output video codec
+    
+    public var videoCodecType: AVVideoCodecType? = nil
 
     /// Public access to Pinch Gesture
     fileprivate(set) public var pinchGesture  : UIPinchGestureRecognizer!
@@ -859,17 +863,26 @@ extension SwiftyCamViewController {
     
     /// Configure Movie Output
     fileprivate func configureVideoOutput() {
-        let movieFileOutput = AVCaptureMovieFileOutput()
-        
-        if self.session.canAddOutput(movieFileOutput) {
-            self.session.addOutput(movieFileOutput)
-            if let connection = movieFileOutput.connection(with: AVMediaType.video) {
-                if connection.isVideoStabilizationSupported {
-                    connection.preferredVideoStabilizationMode = .auto
-                }
-            }
-            self.movieFileOutput = movieFileOutput
+      let movieFileOutput = AVCaptureMovieFileOutput()
+
+      if self.session.canAddOutput(movieFileOutput) {
+        self.session.addOutput(movieFileOutput)
+        if let connection = movieFileOutput.connection(with: AVMediaType.video) {
+          if connection.isVideoStabilizationSupported {
+            connection.preferredVideoStabilizationMode = .auto
+          }
+
+          if #available(iOS 11.0, *) {
+                      if let videoCodecType = videoCodecType {
+                          if movieFileOutput.availableVideoCodecTypes.contains(videoCodecType) == true {
+                              // Use the H.264 codec to encode the video.
+                              movieFileOutput.setOutputSettings([AVVideoCodecKey: videoCodecType], for: connection)
+                          }
+                      }
+                  }
         }
+        self.movieFileOutput = movieFileOutput
+      }
     }
     
     /// Configure Photo Output
