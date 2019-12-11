@@ -29,12 +29,12 @@ open class SwiftyCamViewController: UIViewController {
 
     public enum CameraSelection: String {
 
-		/// Camera on the back of the device
-		case rear = "rear"
+    /// Camera on the back of the device
+    case rear = "rear"
 
-		/// Camera on the front of the device
-		case front = "front"
-	}
+    /// Camera on the front of the device
+    case front = "front"
+  }
 
     /// Enumeration for video quality of the capture session. Corresponds to a AVCaptureSessionPreset
 
@@ -294,7 +294,13 @@ open class SwiftyCamViewController: UIViewController {
         super.init(coder: aDecoder)
         self.videoGravity = .resizeAspectFill
     }
-
+  
+  // makes camera full screen, no bleed or borders
+  public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+    super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    self.videoGravity = .resizeAspectFill
+  }
+  
     // MARK: ViewDidLoad
 
     /// ViewDidLoad Implementation
